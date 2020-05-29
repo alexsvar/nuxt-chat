@@ -20,7 +20,7 @@
             <v-text-field
               v-model="room"
               :rules="roomRules"
-              label="Enter The Room"
+              label="Room"
               required
             ></v-text-field>
             

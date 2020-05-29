@@ -10,23 +10,27 @@
             lazy-validation
           >
             <v-text-field
+              color="success"
               v-model="name"
               :counter="16"
               :rules="nameRules"
               label="Your Name"
+              @keydown.enter="submit"
               required
             ></v-text-field>
             
             <v-text-field
+              color="success"
               v-model="room"
               :rules="roomRules"
               label="Room"
+              @keydown.enter="submit"
               required
             ></v-text-field>
             
             <v-btn
               :disabled="!valid"
-              color="primary"
+              color="success"
               class="mr-4"
               @click="submit"
             >

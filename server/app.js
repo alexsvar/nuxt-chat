@@ -22,10 +22,21 @@ io.on('connection', socket => {
     })
 
     cb({userId: socket.id})
-    socket.emit('newMessage', m('admin', `Welcome to chat, ${data.name}!`))
+    io.to(data.room)
+      .emit(
+        'updateUsers',
+        users.getByRoom(data.room)
+      )
+    socket.emit(
+      'newMessage',
+      m('admin', `Welcome to chat, ${data.name}!`)
+    )
     socket.broadcast
       .to(data.room)
-      .emit('newMessage', m('admin', `${data.name} is logged in.`))
+      .emit(
+        'newMessage',
+        m('admin', `${data.name} is logged in.`)
+      )
   })
 
   socket.on('createMessage', (data, cb) => {
@@ -34,11 +45,47 @@ io.on('connection', socket => {
     }
     const user = users.get(data.id)
     if (user) {
-      io.to(user.room).emit('newMessage', m(user.name, data.text, data.id))
+      io.to(user.room)
+        .emit(
+          'newMessage',
+          m(user.name, data.text, data.id)
+        )
     }
     cb()
   })
 
+  socket.on('userLeft', (id, cb) => {
+    const user = users.remove(id)
+    if (user) {
+      io.to(user.room)
+        .emit(
+          'updateUsers',
+          users.getByRoom(user.room)
+        )
+      io.to(user.room)
+        .emit(
+          'newMessage',
+          m('admin', `${user.name} is logged out.`)
+        )
+    }
+    cb()
+  })
+
+  socket.on('disconnect', () => {
+    const user = users.remove(socket.id)
+    if (user) {
+      io.to(user.room)
+        .emit(
+          'updateUsers',
+          users.getByRoom(user.room)
+        )
+      io.to(user.room)
+        .emit(
+          'newMessage',
+          m('admin', `${user.name} is logged out.`)
+        )
+    }
+  })
 })
 
 

@@ -11,17 +11,18 @@
             <v-list-item-title>{{u.name}}</v-list-item-title>
           </v-list-item-content>
           <v-list-item-icon>
-            <v-icon :color="u.id === 2 ? 'success' : 'grey'">mdi-message</v-icon>
+            <v-icon :color="u.id === user.id ? 'success' : 'grey'">mdi-message</v-icon>
           </v-list-item-icon>
         </v-list-item>
       </v-list>
     </v-navigation-drawer>
     <v-app-bar app>
       <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
+      <v-toolbar-title>Chat room {{user.room}}</v-toolbar-title>
+      <v-spacer></v-spacer>
       <v-btn icon @click="exit">
         <v-icon dark>mdi-arrow-left</v-icon>
       </v-btn>
-      <v-toolbar-title>Chat room {{user.room}}</v-toolbar-title>
     </v-app-bar>
     <v-content>
       <div style="height: 100%">
@@ -36,19 +37,16 @@
 
   export default {
     data: () => ({
-      drawer: true,
-      users: [
-        {id: 1, name: 'User 1'},
-        {id: 2, name: 'User 2'},
-        {id: 3, name: 'User 3'}
-      ]
+      drawer: true
     }),
-    computed: mapState(['user']),
+    computed: mapState(['user', 'users']),
     methods: {
       ...mapMutations(['clearData']),
       exit() {
-        this.$router.push('/?message=leftChat')
-        this.clearData()
+        this.$socket.emit('userLeft', this.user.id, () => {
+          this.$router.push('/?message=leftChat')
+          this.clearData()
+        })
       }
     }
   }

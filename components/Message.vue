@@ -31,10 +31,10 @@
 
 <style lang="scss" scoped>
   .system {
-    margin-bottom: 1rem;
+    margin-bottom: .5rem;
     
     p {
-      margin-bottom: 1rem;
+      margin-bottom: 0;
     }
   }
   
